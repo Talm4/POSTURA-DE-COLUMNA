@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomía de la Columna - Guía Ergonómica</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
+    <style>
+        :root {
+            --azul: #1e40af;
+            --verde: #78bb1e;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f3f4f6;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Contenedor del Visor 3D */
+        model-viewer {
+            width: 100%;
+            height: 70vh; /* Ocupa el 70% de la pantalla */
+            background-color: #ffffff;
+            --poster-color: #ffffff;
+        }
+
+        /* Estilo de los puntos (Hotspots) */
+        .Hotspot {
+            background: var(--verde);
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .Hotspot:not([data-visible]) {
+            display: none;
+        }
+
+        .Hotspot:hover {
+            transform: scale(1.4);
+            background: var(--azul);
+        }
+
+        /* Etiqueta flotante pequeña */
+        .HotspotAnnotation {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: var(--azul);
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            position: absolute;
+            transform: translate(28px, -12px);
+            white-space: nowrap;
+        }
+
+        /* Panel de información inferior (Tipo tarjeta móvil) */
+        #info-panel {
+            flex-grow: 1;
+            background: white;
+            padding: 20px;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+        }
+
+        #info-title {
+            color: var(--azul);
+            margin: 0 0 10px 0;
+            font-size: 1.4rem;
+        }
+
+        #info-content {
+            font-size: 0.95rem;
+            color: #4b5563;
+            line-height: 1.4;
+            max-width: 500px;
+        }
+
+        .instruction {
+            color: #9ca3af;
+            font-style: italic;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        /* Estilo para imágenes dentro del panel */
+        #info-panel img {
+            max-width: 100px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<model-viewer 
+    src="vertebral_column.glb" 
+    ar 
+    ar-modes="webxr scene-viewer quick-look" 
+    camera-controls 
+    tone-mapping="neutral" 
+    shadow-intensity="1" 
+    exposure="0.8">
+
+    <button class="Hotspot" slot="hotspot-2" 
+        data-position="0.096m 14.547m -38.587m" 
+        data-normal="0.163m 0.919m -0.357m" 
+        onclick="showInfo('cervical')">
+        <div class="HotspotAnnotation">Lordosis Cervical</div>
+    </button>
+
+    <button class="Hotspot" slot="hotspot-3" 
+        data-position="0.085m 6.271m -41.838m" 
+        data-normal="0.252m 0.672m -0.696m" 
+        onclick="showInfo('dorsal')">
+        <div class="HotspotAnnotation">Cifosis Dorsal</div>
+    </button>
+
+    <button class="Hotspot" slot="hotspot-4" 
+        data-position="-0.002m -12.261m -35.702m" 
+        data-normal="0.098m 0.478m -0.872m" 
+        onclick="showInfo('lumbar')">
+        <div class="HotspotAnnotation">Lordosis Lumbar</div>
+    </button>
+
+    <button class="Hotspot" slot="hotspot-5" 
+        data-position="-0.546m -24.700m -40.247m" 
+        data-normal="-0.937m 0.076m -0.338m" 
+        onclick="showInfo('sacra')">
+        <div class="HotspotAnnotation">Cifosis Sacra</div>
+    </button>
+</model-viewer>
+
+<div id="info-panel">
+    <h2 id="info-title">Explora la Columna</h2>
+    <div id="info-content">
+        Toca uno de los puntos verdes para conocer los dolores asociados y las posturas que afectan cada zona.
+    </div>
+    <div id="info-image"></div>
+    <div class="instruction">Puedes rotar y hacer zoom sobre el modelo 3D.</div>
+</div>
+
+<script>
+    // Datos de los dolores y posturas
+    const infoData = {
+        'cervical': {
+            title: 'Lordosis Cervical',
+            content: '<b>Dolores:</b> Migrañas, tensión en cuello y hombros.<br><b>Causa:</b> Uso excesivo de celular (cuello inclinado) y monitores a altura incorrecta.',
+            img: 'https://cdn-icons-png.flaticon.com/128/2865/2865814.png' // Ejemplo de icono
+        },
+        'dorsal': {
+            title: 'Cifosis Dorsal',
+            content: '<b>Dolores:</b> Dolor punzante entre las escápulas y dificultad para respirar profundo.<br><b>Causa:</b> Postura encorvada ("joroba") al escribir en el teclado por mucho tiempo.',
+            img: 'https://cdn-icons-png.flaticon.com/128/3062/3062228.png'
+        },
+        'lumbar': {
+            title: 'Lordosis Lumbar',
+            content: '<b>Dolores:</b> Lumbago agudo y ciática.<br><b>Causa:</b> Sillas sin soporte lumbar adecuado y pasar más de 4 horas sentado sin pausas activas.',
+            img: 'https://cdn-icons-png.flaticon.com/128/10414/10414006.png'
+        },
+        'sacra': {
+            title: 'Cifosis Sacra',
+            content: '<b>Dolores:</b> Dolor en el cóccix y base de la columna.<br><b>Causa:</b> Sentarse sobre el borde de la silla o en superficies demasiado duras sin apoyo sacrorrectal.',
+            img: 'https://cdn-icons-png.flaticon.com/128/3022/3022137.png'
+        }
+    };
+
+    function showInfo(zone) {
+        const data = infoData[zone];
+        document.getElementById('info-title').innerText = data.title;
+        document.getElementById('info-content').innerHTML = data.content;
+        document.getElementById('info-image').innerHTML = `<img src="${data.img}" alt="Icono">`;
+        
+        // Estética: Cambiar color de fondo del panel brevemente para indicar cambio
+        const panel = document.getElementById('info-panel');
+        panel.style.backgroundColor = '#f0fff4';
+        setTimeout(() => panel.style.backgroundColor = 'white', 500);
+    }
+</script>
+
+</body>
+</html>
