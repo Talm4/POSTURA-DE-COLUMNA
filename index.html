@@ -3,267 +3,780 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía Interactiva: Salud de tu Columna</title>
+    <title>EspaldasSanas — Guía Interactiva de Columna</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primario: #1e40af; /* Azul Profundo */
-            --secundario: #3b82f6; /* Azul Vibrante */
-            --acento: #78bb1e; /* Verde Salud */
-            --fondo: #f1f5f9;
-            --texto-oscuro: #0f172a;
-            --texto-suave: #475569;
+            --azul-noche: #0d1f3c;
+            --azul-profundo: #1a3a6b;
+            --azul-medio: #1d6fa4;
+            --azul-claro: #38b2e0;
+            --verde-vida: #22c55e;
+            --verde-suave: #4ade80;
+            --verde-menta: #bbf7d0;
+            --blanco: #f0faf5;
+            --gris-hielo: #e8f4f0;
+            --texto-base: #0f2233;
+            --texto-suave: #3d6070;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--fondo);
+            font-family: 'DM Sans', sans-serif;
+            background: var(--azul-noche);
             height: 100vh;
             display: flex;
             flex-direction: column;
-            color: var(--texto-oscuro);
+            overflow: hidden;
+            color: var(--blanco);
         }
 
-        /* Área del Modelo 3D */
-        .visor-container {
-            flex: 1;
-            position: relative;
-            background: #fff;
-            border-bottom: 4px solid var(--acento);
+        /* ─── HEADER ─── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 32px;
+            background: linear-gradient(90deg, var(--azul-noche) 0%, #0a2d4f 100%);
+            border-bottom: 1px solid rgba(56, 178, 224, 0.2);
+            z-index: 20;
+            flex-shrink: 0;
         }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--verde-vida), var(--azul-claro));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, #fff 0%, var(--verde-suave) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-badge {
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--verde-suave);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 5px 14px;
+            border-radius: 99px;
+            letter-spacing: 0.05em;
+        }
+
+        .zone-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .zone-tab {
+            background: transparent;
+            border: 1px solid rgba(56,178,224,0.2);
+            color: rgba(255,255,255,0.5);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            padding: 6px 14px;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .zone-tab:hover, .zone-tab.activo {
+            background: linear-gradient(135deg, var(--azul-medio), var(--verde-vida));
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 0 14px rgba(34,197,94,0.25);
+        }
+
+        /* ─── MAIN LAYOUT ─── */
+        .main-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            overflow: hidden;
+        }
+
+        /* ─── 3D VIEWER ─── */
+        .visor-container {
+            position: relative;
+            background: radial-gradient(ellipse at 50% 30%, #0a2d4f 0%, var(--azul-noche) 70%);
+            overflow: hidden;
+        }
+
+        /* Decorative grid lines */
+        .visor-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(56,178,224,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56,178,224,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        /* Glowing orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        .orb-1 { width: 300px; height: 300px; background: var(--azul-medio); top: -80px; left: -80px; }
+        .orb-2 { width: 250px; height: 250px; background: var(--verde-vida); bottom: -60px; right: -60px; }
+        .orb-3 { width: 180px; height: 180px; background: var(--azul-claro); top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.15; }
 
         model-viewer {
             width: 100%;
             height: 100%;
-            background-color: #ffffff;
+            --poster-color: transparent;
         }
 
-        /* Estilo de los Puntos de Interacción */
+        /* ─── HOTSPOTS ─── */
         .Hotspot {
-            background: var(--acento);
             border-radius: 50%;
-            border: 4px solid white;
-            box-shadow: 0 0 20px rgba(120, 187, 30, 0.4);
-            width: 28px;
-            height: 28px;
+            border: 3px solid rgba(255,255,255,0.9);
+            width: 26px;
+            height: 26px;
             cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
 
-        .Hotspot:hover {
-            transform: scale(1.3);
-            background: var(--primario);
-        }
+        .Hotspot[data-zona="cervical"]  { background: #38b2e0; box-shadow: 0 0 0 0 rgba(56,178,224,0.7); }
+        .Hotspot[data-zona="dorsal"]    { background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+        .Hotspot[data-zona="lumbar"]    { background: #f59e0b; box-shadow: 0 0 0 0 rgba(245,158,11,0.7); }
+        .Hotspot[data-zona="sacra"]     { background: #a78bfa; box-shadow: 0 0 0 0 rgba(167,139,250,0.7); }
+
+        .Hotspot.activo { transform: scale(1.3); }
+
+        .Hotspot.pulse-blue  { animation: pulse-color 2s infinite; }
+        .Hotspot.pulse-green { animation: pulse-green 2s infinite; }
+        .Hotspot.pulse-amber { animation: pulse-amber 2s infinite; }
+        .Hotspot.pulse-violet{ animation: pulse-violet 2s infinite; }
+
+        @keyframes pulse-color  { 0%,100%{box-shadow:0 0 0 0 rgba(56,178,224,0.6)} 50%{box-shadow:0 0 0 14px rgba(56,178,224,0)} }
+        @keyframes pulse-green  { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.6)}  50%{box-shadow:0 0 0 14px rgba(34,197,94,0)} }
+        @keyframes pulse-amber  { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.6)} 50%{box-shadow:0 0 0 14px rgba(245,158,11,0)} }
+        @keyframes pulse-violet { 0%,100%{box-shadow:0 0 0 0 rgba(167,139,250,0.6)}50%{box-shadow:0 0 0 14px rgba(167,139,250,0)} }
 
         .HotspotAnnotation {
-            background: var(--primario);
-            border-radius: 8px;
+            font-family: 'Syne', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(13, 31, 60, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
             color: white;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 8px 16px;
+            padding: 6px 12px;
+            border-radius: 6px;
             position: absolute;
-            transform: translate(35px, -20px);
+            transform: translate(36px, -14px);
             white-space: nowrap;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            letter-spacing: 0.03em;
         }
 
-        /* Panel de Estudio (Información) */
-        #info-panel {
-            background: white;
-            padding: 30px;
-            min-height: 260px;
+        /* ─── SIDE PANEL ─── */
+        .side-panel {
+            background: linear-gradient(180deg, #0a1e35 0%, #071626 100%);
+            border-left: 1px solid rgba(56,178,224,0.15);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Welcome state */
+        .welcome-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 30px;
+            text-align: center;
             gap: 20px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
-            z-index: 10;
         }
 
-        .panel-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 25px;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .panel-grid.visible { opacity: 1; }
-
-        .info-card {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 5px solid var(--acento);
-        }
-
-        .info-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            color: var(--primario);
+        .welcome-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(56,178,224,0.15));
+            border: 1px solid rgba(56,178,224,0.2);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .welcome-state h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .welcome-state p {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .zone-hint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .zone-hint {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .zone-hint:hover {
+            background: rgba(56,178,224,0.08);
+            border-color: rgba(56,178,224,0.2);
+            transform: translateX(4px);
+        }
+
+        .zone-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .zone-hint span { font-size: 0.85rem; color: rgba(255,255,255,0.6); font-weight: 500; }
+
+        /* Info state */
+        .info-state {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(56,178,224,0.2) transparent;
+        }
+
+        .info-state.visible { display: flex; }
+
+        /* Zone hero */
+        .zone-hero {
+            padding: 28px 28px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zone-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.08;
+            background: var(--hero-color, #38b2e0);
+        }
+
+        .zone-hero-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .zone-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            opacity: 0.5;
+            margin-bottom: 6px;
+        }
+
+        .zone-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: white;
+        }
+
+        .zone-emoji {
+            font-size: 2.2rem;
+            line-height: 1;
+        }
+
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(34,197,94,0.12);
+            border: 1px solid rgba(34,197,94,0.25);
+            color: var(--verde-suave);
+        }
+
+        .stat-pill::before { content: '📊'; font-size: 0.9em; }
+
+        /* Info cards */
+        .cards-area {
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            flex: 1;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 18px;
+            transition: border-color 0.2s;
+        }
+
+        .info-card:hover { border-color: rgba(56,178,224,0.2); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .card-icon.azul   { background: rgba(56,178,224,0.15); }
+        .card-icon.rojo   { background: rgba(239,68,68,0.15); }
+        .card-icon.verde  { background: rgba(34,197,94,0.15); }
+
+        .card-header h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
         }
 
         .info-card p {
-            margin: 0;
-            font-size: 1rem;
-            line-height: 1.6;
-            color: var(--texto-suave);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.7);
         }
 
-        .title-main {
-            font-size: 1.8rem;
-            color: var(--primario);
-            margin: 0;
-            font-weight: 800;
+        /* Tip highlight */
+        .tip-highlight {
+            background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(56,178,224,0.08));
+            border: 1px solid rgba(34,197,94,0.2);
         }
 
-        .badge-incidencia {
-            background: #dcfce7;
-            color: #166534;
-            padding: 6px 12px;
+        .tip-highlight p { color: rgba(255,255,255,0.85); }
+
+        /* Progress indicator / severity */
+        .severity-bar-wrap {
+            margin-top: 12px;
+        }
+
+        .severity-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 6px;
+        }
+
+        .severity-track {
+            height: 5px;
+            background: rgba(255,255,255,0.08);
             border-radius: 99px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 10px;
+            overflow: hidden;
         }
 
-        /* Animación de Pulso */
-        .pulse { animation: pulse-animation 2s infinite; }
-        @keyframes pulse-animation {
-            0% { box-shadow: 0 0 0 0px rgba(120, 187, 30, 0.6); }
-            100% { box-shadow: 0 0 0 20px rgba(120, 187, 30, 0); }
+        .severity-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, var(--verde-vida), var(--azul-claro));
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Instrucciones Iniciales */
-        #welcome-msg {
-            text-align: center;
-            padding: 40px;
-            color: var(--texto-suave);
+        /* Footer back button */
+        .panel-footer {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
         }
 
-        @media (max-width: 900px) {
-            .panel-grid { grid-template-columns: 1fr; }
-            #info-panel { overflow-y: auto; }
+        .btn-volver {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid rgba(56,178,224,0.2);
+            border-radius: 10px;
+            color: rgba(255,255,255,0.4);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-volver:hover {
+            background: rgba(56,178,224,0.08);
+            color: var(--azul-claro);
+            border-color: rgba(56,178,224,0.3);
+        }
+
+        /* ─── BOTTOM STATUS BAR ─── */
+        .status-bar {
+            background: rgba(6, 15, 28, 0.9);
+            border-top: 1px solid rgba(56,178,224,0.1);
+            padding: 8px 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-shrink: 0;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .dot-green  { background: var(--verde-vida); box-shadow: 0 0 6px var(--verde-vida); }
+        .dot-blue   { background: var(--azul-claro); }
+
+        /* ─── FADE IN ANIMATION ─── */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in { animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .animate-in:nth-child(2) { animation-delay: 0.07s; }
+        .animate-in:nth-child(3) { animation-delay: 0.14s; }
+        .animate-in:nth-child(4) { animation-delay: 0.21s; }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 800px) {
+            .main-layout { grid-template-columns: 1fr; grid-template-rows: 60% 40%; }
+            .side-panel { border-left: none; border-top: 1px solid rgba(56,178,224,0.15); }
+            header { padding: 10px 16px; }
+            .zone-tabs { display: none; }
         }
     </style>
 </head>
 <body>
 
-<div class="visor-container">
-    <model-viewer 
-        src="vertebral_column.glb" 
-        camera-controls 
-        auto-rotate
-        touch-action="pan-y"
-        shadow-intensity="1" 
-        camera-orbit="45deg 75deg 110%"
-        exposure="1">
-
-        <button class="Hotspot pulse" slot="hotspot-cervical" data-position="0.0968 14.547 -38.587" onclick="showInfo('cervical')">
-            <div class="HotspotAnnotation">Cuello (Cervical)</div>
-        </button>
-
-        <button class="Hotspot pulse" slot="hotspot-dorsal" data-position="0.0851 6.2719 -41.838" onclick="showInfo('dorsal')">
-            <div class="HotspotAnnotation">Espalda Media (Dorsal)</div>
-        </button>
-
-        <button class="Hotspot pulse" slot="hotspot-lumbar" data-position="-0.0023 -12.261 -35.702" onclick="showInfo('lumbar')">
-            <div class="HotspotAnnotation">Espalda Baja (Lumbar)</div>
-        </button>
-
-        <button class="Hotspot pulse" slot="hotspot-sacra" data-position="-0.5462 -24.700 -40.247" onclick="showInfo('sacra')">
-            <div class="HotspotAnnotation">Base (Sacro)</div>
-        </button>
-    </model-viewer>
-</div>
-
-<div id="info-panel">
-    <div id="welcome-msg">
-        <h2 style="color:var(--primario)">Módulo Interactivo de Ergonomía</h2>
-        <p>Selecciona un punto en la columna para iniciar tu estudio sobre posturas y salud.</p>
+<!-- ── HEADER ── -->
+<header>
+    <div class="logo">
+        <div class="logo-icon">🦴</div>
+        <span class="logo-text">EspaldasSanas</span>
     </div>
 
-    <div id="content-display" style="display:none">
-        <div style="margin-bottom: 20px;">
-            <h2 class="title-main" id="info-title">Zona</h2>
-            <div id="info-stat" class="badge-incidencia">70% de las personas sufren de esto</div>
+    <nav class="zone-tabs">
+        <button class="zone-tab" onclick="showInfo('cervical')">Cervical</button>
+        <button class="zone-tab" onclick="showInfo('dorsal')">Dorsal</button>
+        <button class="zone-tab" onclick="showInfo('lumbar')">Lumbar</button>
+        <button class="zone-tab" onclick="showInfo('sacra')">Sacro</button>
+    </nav>
+
+    <span class="header-badge">● Módulo Interactivo</span>
+</header>
+
+<!-- ── MAIN ── -->
+<div class="main-layout">
+
+    <!-- 3D VIEWER -->
+    <div class="visor-container">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+
+        <model-viewer 
+            src="vertebral_column.glb" 
+            camera-controls 
+            auto-rotate
+            touch-action="pan-y"
+            shadow-intensity="1.2"
+            camera-orbit="45deg 75deg 110%"
+            exposure="0.9"
+            environment-image="neutral">
+
+            <button class="Hotspot pulse-blue" slot="hotspot-cervical" data-zona="cervical"
+                    data-position="0.0968 14.547 -38.587" onclick="showInfo('cervical')">
+                <div class="HotspotAnnotation">Zona Cervical</div>
+            </button>
+
+            <button class="Hotspot pulse-green" slot="hotspot-dorsal" data-zona="dorsal"
+                    data-position="0.0851 6.2719 -41.838" onclick="showInfo('dorsal')">
+                <div class="HotspotAnnotation">Zona Dorsal</div>
+            </button>
+
+            <button class="Hotspot pulse-amber" slot="hotspot-lumbar" data-zona="lumbar"
+                    data-position="-0.0023 -12.261 -35.702" onclick="showInfo('lumbar')">
+                <div class="HotspotAnnotation">Zona Lumbar</div>
+            </button>
+
+            <button class="Hotspot pulse-violet" slot="hotspot-sacra" data-zona="sacra"
+                    data-position="-0.5462 -24.700 -40.247" onclick="showInfo('sacra')">
+                <div class="HotspotAnnotation">Zona Sacra</div>
+            </button>
+        </model-viewer>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <aside class="side-panel">
+
+        <!-- Welcome -->
+        <div class="welcome-state" id="welcome-state">
+            <div class="welcome-icon">🫀</div>
+            <h2>Explora tu Columna</h2>
+            <p>Haz clic en cualquier punto de la columna o selecciona una zona para conocer los riesgos, síntomas y cómo cuidarte.</p>
+            
+            <div class="zone-hint-list">
+                <div class="zone-hint" onclick="showInfo('cervical')">
+                    <div class="zone-dot" style="background:#38b2e0"></div>
+                    <span>Zona Cervical — Cuello</span>
+                    <span style="margin-left:auto; font-size:0.8rem; opacity:0.35">→</span>
+                </div>
+                <div class="zone-hint" onclick="showInfo('dorsal')">
+                    <div class="zone-dot" style="background:#22c55e"></div>
+                    <span>Zona Dorsal — Espalda media</span>
+                    <span style="margin-left:auto; font-size:0.8rem; opacity:0.35">→</span>
+                </div>
+                <div class="zone-hint" onclick="showInfo('lumbar')">
+                    <div class="zone-dot" style="background:#f59e0b"></div>
+                    <span>Zona Lumbar — Espalda baja</span>
+                    <span style="margin-left:auto; font-size:0.8rem; opacity:0.35">→</span>
+                </div>
+                <div class="zone-hint" onclick="showInfo('sacra')">
+                    <div class="zone-dot" style="background:#a78bfa"></div>
+                    <span>Zona Sacra — Base</span>
+                    <span style="margin-left:auto; font-size:0.8rem; opacity:0.35">→</span>
+                </div>
+            </div>
         </div>
 
-        <div class="panel-grid visible">
-            <div class="info-card">
-                <h3>🔍 ¿Cómo se daña?</h3>
-                <p id="info-risk">Explicación del daño.</p>
+        <!-- Info content -->
+        <div class="info-state" id="info-state">
+            <div class="zone-hero" id="zone-hero">
+                <div class="zone-hero-top">
+                    <div>
+                        <div class="zone-label">Zona anatómica</div>
+                        <div class="zone-title" id="info-title">—</div>
+                    </div>
+                    <div class="zone-emoji" id="zone-emoji">🦴</div>
+                </div>
+                <div class="stat-pill" id="info-stat">—</div>
+
+                <div class="severity-bar-wrap">
+                    <div class="severity-label">
+                        <span>Prevalencia de lesión</span>
+                        <span id="severity-pct">—</span>
+                    </div>
+                    <div class="severity-track">
+                        <div class="severity-fill" id="severity-fill" style="width:0%"></div>
+                    </div>
+                </div>
             </div>
-            <div class="info-card" style="border-left-color: #ef4444;">
-                <h3>⚡ ¿Qué sientes?</h3>
-                <p id="info-symptoms">Dolores comunes.</p>
+
+            <div class="cards-area" id="cards-area">
+                <div class="info-card animate-in">
+                    <div class="card-header">
+                        <div class="card-icon azul">🔍</div>
+                        <h3>¿Cómo se daña?</h3>
+                    </div>
+                    <p id="info-risk">—</p>
+                </div>
+
+                <div class="info-card animate-in" style="border-left: 2px solid rgba(239,68,68,0.4)">
+                    <div class="card-header">
+                        <div class="card-icon rojo">⚡</div>
+                        <h3>Síntomas frecuentes</h3>
+                    </div>
+                    <p id="info-symptoms">—</p>
+                </div>
+
+                <div class="info-card tip-highlight animate-in">
+                    <div class="card-header">
+                        <div class="card-icon verde">✅</div>
+                        <h3>Postura correcta</h3>
+                    </div>
+                    <p id="info-tip">—</p>
+                </div>
+
+                <div class="info-card animate-in">
+                    <div class="card-header">
+                        <div class="card-icon azul">💪</div>
+                        <h3>Ejercicio recomendado</h3>
+                    </div>
+                    <p id="info-exercise">—</p>
+                </div>
             </div>
-            <div class="info-card" style="border-left-color: var(--secundario);">
-                <h3>✅ Postura de Estudio</h3>
-                <p id="info-tip">Consejo para mejorar.</p>
+
+            <div class="panel-footer">
+                <button class="btn-volver" onclick="volver()">← Seleccionar otra zona</button>
             </div>
         </div>
-    </div>
+
+    </aside>
 </div>
+
+<!-- ── STATUS BAR ── -->
+<div class="status-bar">
+    <div class="status-item"><div class="status-dot dot-green"></div>Modelo 3D activo</div>
+    <div class="status-item"><div class="status-dot dot-blue"></div>4 zonas interactivas</div>
+    <div class="status-item" id="status-zone" style="margin-left:auto; color:rgba(255,255,255,0.2)">Ninguna zona seleccionada</div>
+</div>
+
 
 <script>
-    const materialEstudio = {
-        'cervical': {
-            title: 'Zona del Cuello',
+    const datos = {
+        cervical: {
+            title: 'Zona Cervical',
+            emoji: '🌐',
             stat: '7 de cada 10 personas sufren tensión aquí',
-            risk: 'Mirar mucho tiempo el celular o el portátil hacia abajo. Es como si tu cuello cargara un niño de 25 kilos todo el día.',
-            symptoms: 'Dolores de cabeza, cuello rígido y sensación de "hormigueo" en los dedos.',
-            tip: 'Mantén tu pantalla siempre a la altura de tus ojos. ¡No bajes la cabeza, sube el equipo!'
+            severity: 72,
+            heroBg: '#38b2e0',
+            risk: 'Inclinarte durante horas sobre el celular o el portátil aumenta el peso que sopor­ta tu cuello hasta 25 kg — es como cargar un niño todo el día. Las video­llamadas y las malas alturas de pantalla son los principales culpables.',
+            symptoms: 'Dolores de cabeza tensionales, cuello rígido al despertar, sensación de "hormigueo" o entumecimiento irradiado hacia los hombros y los dedos.',
+            tip: 'Alinea el borde superior de tu pantalla con la línea de tus ojos. Usa un soporte si trabajas con portátil y conecta un teclado externo para mantener los brazos relajados.',
+            exercise: 'Rota lentamente la cabeza de lado a lado (chin tucks) durante 30 segundos, 3 veces al día. Esto reactiva los músculos profundos del cuello y reduce la tensión acumulada.'
         },
-        'dorsal': {
-            title: 'Espalda Media',
-            stat: 'Muy común en quienes trabajan mucho tiempo sentados',
-            risk: 'Sentarse "encorvado" o con los hombros hacia adelante. Esto cierra tu pecho y dificulta una buena respiración.',
-            symptoms: 'Dolor punzante entre los omóplatos y cansancio muscular al final del día.',
-            tip: 'Cada 30 minutos, lleva tus hombros hacia atrás y abre el pecho. ¡Imagina que quieres juntar tus omóplatos!'
+        dorsal: {
+            title: 'Zona Dorsal',
+            emoji: '🫁',
+            stat: 'Muy prevalente en personas con jornadas largas frente a pantallas',
+            severity: 58,
+            heroBg: '#22c55e',
+            risk: 'Sentarse "encorvado" colapsa la caja torácica, limita la expansión pulmonar y somete a los músculos entre los omóplatos a una tensión constante. El teletrabajo ha disparado su incidencia en los últimos años.',
+            symptoms: 'Dolor punzante entre los omóplatos, fatiga muscular progresiva a lo largo del día, sensación de "pecho cerrado" y respiración superficial.',
+            tip: 'Cada 30 minutos, realiza una apertura de pecho: lleva los hombros hacia atrás y arriba, aguanta 3 segundos y suelta. Imagina que quieres hacer que tus omóplatos se toquen.',
+            exercise: 'El "Ángel de pared": apóyate contra la pared con espalda, glúteos y cabeza en contacto, sube los brazos en forma de Y–W–T. Haz 10 repeticiones dos veces al día.'
         },
-        'lumbar': {
-            title: 'Espalda Baja',
-            stat: 'Es la zona que más se lesiona en el mundo',
-            risk: 'Sentarse sin apoyar la espalda baja. El peso de tu cuerpo "aplasta" los discos de tu columna en lugar de repartirse bien.',
-            symptoms: 'Dolor fuerte al levantarse, sensación de "corrientazo" hacia las piernas y lumbago.',
-            tip: 'Usa siempre una silla con soporte lumbar o pon una almohada pequeña en el hueco de tu espalda baja.'
+        lumbar: {
+            title: 'Zona Lumbar',
+            emoji: '⚖️',
+            stat: 'Causa nº1 de incapacidad laboral en el mundo',
+            severity: 88,
+            heroBg: '#f59e0b',
+            risk: 'Sentarse sin apoyo lumbar desplaza la carga hacia los discos interverte­brales en vez de distribuirla por los músculos del core. Con el tiempo, los discos se compri­men y pueden herniarse, comprimiendo nervios cercanos.',
+            symptoms: 'Dolor agudo al incorporarte, "corrientazo" o ciática que baja por la pierna, rigidez matutina y molestias que empeoran al estar sentado más de una hora.',
+            tip: 'Siéntate completamente al fondo de la silla, con la curva lumbar apoyada. Coloca una pequeña almohada lumbar o enrolla una toalla si tu silla no tiene soporte integrado. Tus rodillas deben estar a 90°.',
+            exercise: 'El "Puente de glúteos": acostado boca arriba con rodillas dobladas, eleva las caderas hasta alinear muslos y torso, aguanta 5 segundos. Haz 3 series de 10. Activa el core y estabiliza la lumbar.'
         },
-        'sacra': {
-            title: 'Base de la Columna',
-            stat: 'Afecta la comodidad en jornadas largas',
-            risk: 'Sentarse en el borde de la silla o deslizarse hacia adelante. Todo el peso cae en un solo punto muy pequeño.',
-            symptoms: 'Dolor molesto al sentarse en sillas duras y presión en los huesos de la cadera.',
-            tip: 'Siéntate al fondo de la silla. Tus glúteos deben tocar el respaldo siempre.'
+        sacra: {
+            title: 'Zona Sacra',
+            emoji: '🏛️',
+            stat: 'Afecta la comodidad en jornadas de más de 4 horas sentado',
+            severity: 44,
+            heroBg: '#a78bfa',
+            risk: 'Deslizarse al borde de la silla o adoptar una postura "caída" concentra toda la presión del peso corporal en el cóccix y el sacro, estructuras que no están diseñadas para esa carga sostenida.',
+            symptoms: 'Dolor al sentarse sobre superficies duras, presión molesta en los huesos de la cadera, adormecimiento de glúteos y dificultad para cambiar de posición.',
+            tip: 'Siéntate con los glúteos tocando el respaldo. Distribuye el peso equitativamente entre ambos isquiones (los "huesos de asentarse"). Considera un cojín ergonómico en forma de "U" si trabajas muchas horas.',
+            exercise: 'Estiramiento piriforme: sentado, cruza el tobillo sobre la rodilla opuesta, inclínate levemente hacia adelante hasta sentir el estiramiento en el glúteo. Mantén 30 segundos por cada lado.'
         }
     };
 
     function showInfo(zone) {
-        const data = materialEstudio[zone];
-        
-        // Ocultar bienvenida, mostrar contenido
-        document.getElementById('welcome-msg').style.display = 'none';
-        document.getElementById('content-display').style.display = 'block';
+        const d = datos[zone];
 
-        // Actualizar Textos
-        document.getElementById('info-title').innerText = data.title;
-        document.getElementById('info-stat').innerText = data.stat;
-        document.getElementById('info-risk').innerText = data.risk;
-        document.getElementById('info-symptoms').innerText = data.symptoms;
-        document.getElementById('info-tip').innerText = data.tip;
+        // Swap states
+        document.getElementById('welcome-state').style.display = 'none';
+        const infoState = document.getElementById('info-state');
+        infoState.classList.add('visible');
 
-        // Pequeño efecto de brillo al cambiar
-        const panel = document.getElementById('info-panel');
-        panel.style.borderTopColor = (zone === 'lumbar') ? '#ef4444' : '#78bb1e';
+        // Update hero
+        document.getElementById('zone-hero').style.setProperty('--hero-color', d.heroBg);
+        document.getElementById('info-title').innerText  = d.title;
+        document.getElementById('zone-emoji').innerText  = d.emoji;
+        document.getElementById('info-stat').innerText   = d.stat;
+        document.getElementById('severity-pct').innerText = d.severity + '%';
+
+        // Animate severity bar
+        setTimeout(() => {
+            document.getElementById('severity-fill').style.width = d.severity + '%';
+        }, 50);
+
+        // Cards
+        document.getElementById('info-risk').innerText     = d.risk;
+        document.getElementById('info-symptoms').innerText = d.symptoms;
+        document.getElementById('info-tip').innerText      = d.tip;
+        document.getElementById('info-exercise').innerText = d.exercise;
+
+        // Re-trigger card animations
+        document.querySelectorAll('.info-card').forEach((c, i) => {
+            c.style.animation = 'none';
+            c.offsetHeight; // reflow
+            c.style.animation = `fadeSlideUp 0.5s cubic-bezier(0.16,1,0.3,1) ${i * 0.07}s both`;
+        });
+
+        // Status bar
+        document.getElementById('status-zone').innerText  = '📍 ' + d.title;
+        document.getElementById('status-zone').style.color = d.heroBg;
+
+        // Update header tabs
+        document.querySelectorAll('.zone-tab').forEach(t => t.classList.remove('activo'));
+        const tabs = ['cervical','dorsal','lumbar','sacra'];
+        const idx = tabs.indexOf(zone);
+        if (idx > -1) document.querySelectorAll('.zone-tab')[idx]?.classList.add('activo');
+
+        // Scroll panel top
+        infoState.scrollTop = 0;
+    }
+
+    function volver() {
+        document.getElementById('welcome-state').style.display = 'flex';
+        document.getElementById('info-state').classList.remove('visible');
+        document.getElementById('severity-fill').style.width = '0%';
+        document.getElementById('status-zone').innerText = 'Ninguna zona seleccionada';
+        document.getElementById('status-zone').style.color = 'rgba(255,255,255,0.2)';
+        document.querySelectorAll('.zone-tab').forEach(t => t.classList.remove('activo'));
     }
 </script>
-
 </body>
 </html>
