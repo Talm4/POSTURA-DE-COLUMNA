@@ -3,256 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis Biomecánico de la Columna</title>
+    <title>Guía Interactiva: Salud de tu Columna</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     
     <style>
         :root {
-            --azul: #1e40af;
-            --azul-claro: #3b82f6;
-            --verde: #78bb1e;
-            --gris-bg: #f8fafc;
+            --primario: #1e40af; /* Azul Profundo */
+            --secundario: #3b82f6; /* Azul Vibrante */
+            --acento: #78bb1e; /* Verde Salud */
+            --fondo: #f1f5f9;
+            --texto-oscuro: #0f172a;
+            --texto-suave: #475569;
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffff;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--fondo);
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            color: var(--texto-oscuro);
         }
 
-        /* Contenedor Superior: Visor 3D */
-        .viewer-container {
+        /* Área del Modelo 3D */
+        .visor-container {
             flex: 1;
             position: relative;
-            background: radial-gradient(circle, #ffffff 0%, #e2e8f0 100%);
+            background: #fff;
+            border-bottom: 4px solid var(--acento);
         }
 
         model-viewer {
             width: 100%;
             height: 100%;
-            --min-hotspot-opacity: 0.5;
+            background-color: #ffffff;
         }
 
-        /* Estilo Hotspots */
+        /* Estilo de los Puntos de Interacción */
         .Hotspot {
-            background: var(--verde);
+            background: var(--acento);
             border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 15px rgba(120, 187, 30, 0.6);
-            width: 24px;
-            height: 24px;
+            border: 4px solid white;
+            box-shadow: 0 0 20px rgba(120, 187, 30, 0.4);
+            width: 28px;
+            height: 28px;
             cursor: pointer;
-            z-index: 10;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .Hotspot:not([data-visible]) {
-            background: rgba(120, 187, 30, 0.3);
-            border-color: rgba(255,255,255,0.3);
+        .Hotspot:hover {
+            transform: scale(1.3);
+            background: var(--primario);
         }
 
         .HotspotAnnotation {
-            background: white;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            color: var(--azul);
-            font-size: 12px;
-            font-weight: 800;
-            padding: 6px 12px;
-            position: absolute;
-            transform: translate(32px, -15px);
-            white-space: nowrap;
-            pointer-events: none;
-            border-left: 4px solid var(--verde);
-        }
-
-        /* Panel de Información Mejorado */
-        #info-panel {
-            background: var(--gris-bg);
-            padding: 20px 30px;
-            border-top: 4px solid var(--verde);
-            min-height: 250px;
-            display: flex;
-            gap: 25px;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.05);
-            overflow-y: auto;
-        }
-
-        .info-header {
-            flex: 1;
-            border-right: 1px solid #e2e8f0;
-            padding-right: 20px;
-        }
-
-        .info-details {
-            flex: 2;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        #info-title { 
-            color: var(--azul); 
-            font-size: 1.6rem; 
-            margin: 0 0 10px 0;
-            text-transform: uppercase;
-        }
-
-        .stat-badge {
-            display: inline-block;
-            background: var(--verde);
+            background: var(--primario);
+            border-radius: 8px;
             color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            position: absolute;
+            transform: translate(35px, -20px);
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Panel de Estudio (Información) */
+        #info-panel {
+            background: white;
+            padding: 30px;
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 25px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .panel-grid.visible { opacity: 1; }
+
+        .info-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid var(--acento);
+        }
+
+        .info-card h3 {
+            margin: 0 0 10px 0;
             font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        .data-section h3 {
-            font-size: 0.85rem;
-            color: var(--azul-claro);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            color: var(--primario);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .data-section p {
-            font-size: 0.95rem;
-            color: #475569;
-            line-height: 1.5;
+        .info-card p {
             margin: 0;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--texto-suave);
         }
 
-        /* Animaciones */
-        .pulse {
-            animation: pulse-animation 2s infinite;
+        .title-main {
+            font-size: 1.8rem;
+            color: var(--primario);
+            margin: 0;
+            font-weight: 800;
         }
 
+        .badge-incidencia {
+            background: #dcfce7;
+            color: #166534;
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* Animación de Pulso */
+        .pulse { animation: pulse-animation 2s infinite; }
         @keyframes pulse-animation {
-            0% { box-shadow: 0 0 0 0px rgba(120, 187, 30, 0.7); }
-            100% { box-shadow: 0 0 0 15px rgba(120, 187, 30, 0); }
+            0% { box-shadow: 0 0 0 0px rgba(120, 187, 30, 0.6); }
+            100% { box-shadow: 0 0 0 20px rgba(120, 187, 30, 0); }
         }
 
-        /* Adaptación Móvil */
-        @media (max-width: 768px) {
-            #info-panel { flex-direction: column; height: 50vh; }
-            .info-header { border-right: none; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; }
-            .info-details { grid-template-columns: 1fr; }
+        /* Instrucciones Iniciales */
+        #welcome-msg {
+            text-align: center;
+            padding: 40px;
+            color: var(--texto-suave);
+        }
+
+        @media (max-width: 900px) {
+            .panel-grid { grid-template-columns: 1fr; }
+            #info-panel { overflow-y: auto; }
         }
     </style>
 </head>
 <body>
 
-<div class="viewer-container">
+<div class="visor-container">
     <model-viewer 
         src="vertebral_column.glb" 
         camera-controls 
         auto-rotate
         touch-action="pan-y"
         shadow-intensity="1" 
-        camera-orbit="45deg 75deg 105%"
+        camera-orbit="45deg 75deg 110%"
         exposure="1">
 
-        <button class="Hotspot pulse" slot="hotspot-cervical" 
-            data-position="0.0968 14.547 -38.587" 
-            data-normal="0.1639 0.9195 -0.3572" 
-            onclick="showInfo('cervical')">
-            <div class="HotspotAnnotation">Zona Cervical</div>
+        <button class="Hotspot pulse" slot="hotspot-cervical" data-position="0.0968 14.547 -38.587" onclick="showInfo('cervical')">
+            <div class="HotspotAnnotation">Cuello (Cervical)</div>
         </button>
 
-        <button class="Hotspot pulse" slot="hotspot-dorsal" 
-            data-position="0.0851 6.2719 -41.838" 
-            data-normal="0.2521 0.6721 -0.6961" 
-            onclick="showInfo('dorsal')">
-            <div class="HotspotAnnotation">Zona Dorsal</div>
+        <button class="Hotspot pulse" slot="hotspot-dorsal" data-position="0.0851 6.2719 -41.838" onclick="showInfo('dorsal')">
+            <div class="HotspotAnnotation">Espalda Media (Dorsal)</div>
         </button>
 
-        <button class="Hotspot pulse" slot="hotspot-lumbar" 
-            data-position="-0.0023 -12.261 -35.702" 
-            data-normal="0.0984 0.4787 -0.8724" 
-            onclick="showInfo('lumbar')">
-            <div class="HotspotAnnotation">Zona Lumbar</div>
+        <button class="Hotspot pulse" slot="hotspot-lumbar" data-position="-0.0023 -12.261 -35.702" onclick="showInfo('lumbar')">
+            <div class="HotspotAnnotation">Espalda Baja (Lumbar)</div>
         </button>
 
-        <button class="Hotspot pulse" slot="hotspot-sacra" 
-            data-position="-0.5462 -24.700 -40.247" 
-            data-normal="-0.9376 0.0769 -0.3389" 
-            onclick="showInfo('sacra')">
-            <div class="HotspotAnnotation">Zona Sacra</div>
+        <button class="Hotspot pulse" slot="hotspot-sacra" data-position="-0.5462 -24.700 -40.247" onclick="showInfo('sacra')">
+            <div class="HotspotAnnotation">Base (Sacro)</div>
         </button>
     </model-viewer>
 </div>
 
 <div id="info-panel">
-    <div class="info-header">
-        <div id="stat-container" style="display:none;">
-            <span class="stat-badge" id="info-stat">Incidencia: --</span>
-        </div>
-        <h2 id="info-title">Análisis Postural</h2>
-        <p id="info-intro">Toca los puntos en el modelo 3D para obtener el diagnóstico técnico de cada zona.</p>
+    <div id="welcome-msg">
+        <h2 style="color:var(--primario)">Módulo Interactivo de Ergonomía</h2>
+        <p>Selecciona un punto en la columna para iniciar tu estudio sobre posturas y salud.</p>
     </div>
 
-    <div class="info-details">
-        <div class="data-section">
-            <h3>⚠️ Biomecánica del Daño</h3>
-            <p id="info-risk">Seleccione una zona para ver los riesgos.</p>
+    <div id="content-display" style="display:none">
+        <div style="margin-bottom: 20px;">
+            <h2 class="title-main" id="info-title">Zona</h2>
+            <div id="info-stat" class="badge-incidencia">70% de las personas sufren de esto</div>
         </div>
-        <div class="data-section">
-            <h3>📍 Sintomatología Técnica</h3>
-            <p id="info-symptoms">Información sobre dolores y síntomas.</p>
+
+        <div class="panel-grid visible">
+            <div class="info-card">
+                <h3>🔍 ¿Cómo se daña?</h3>
+                <p id="info-risk">Explicación del daño.</p>
+            </div>
+            <div class="info-card" style="border-left-color: #ef4444;">
+                <h3>⚡ ¿Qué sientes?</h3>
+                <p id="info-symptoms">Dolores comunes.</p>
+            </div>
+            <div class="info-card" style="border-left-color: var(--secundario);">
+                <h3>✅ Postura de Estudio</h3>
+                <p id="info-tip">Consejo para mejorar.</p>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const infoData = {
+    const materialEstudio = {
         'cervical': {
-            title: 'Lordosis Cervical (C1-C7)',
-            stat: '70% de incidencia en oficina',
-            risk: 'El uso de pantallas por debajo de la línea visual obliga a una flexión constante. Inclinar la cabeza 60° genera una carga de 27kg sobre los discos cervicales.',
-            symptoms: 'Cefaleas tensionales, mareos, dolor irradiado a los hombros y pérdida de sensibilidad en las manos.'
+            title: 'Zona del Cuello',
+            stat: '7 de cada 10 personas sufren tensión aquí',
+            risk: 'Mirar mucho tiempo el celular o el portátil hacia abajo. Es como si tu cuello cargara un niño de 25 kilos todo el día.',
+            symptoms: 'Dolores de cabeza, cuello rígido y sensación de "hormigueo" en los dedos.',
+            tip: 'Mantén tu pantalla siempre a la altura de tus ojos. ¡No bajes la cabeza, sube el equipo!'
         },
         'dorsal': {
-            title: 'Cifosis Dorsal (T1-T12)',
-            stat: '45% de fatiga muscular',
-            risk: 'La postura de "joroba" al escribir comprime la caja torácica, reduciendo la eficiencia respiratoria y sobreestirando los músculos romboides.',
-            symptoms: 'Dolor punzante entre las escápulas, dificultad para mantener la espalda erguida y fatiga muscular rápida.'
+            title: 'Espalda Media',
+            stat: 'Muy común en quienes trabajan mucho tiempo sentados',
+            risk: 'Sentarse "encorvado" o con los hombros hacia adelante. Esto cierra tu pecho y dificulta una buena respiración.',
+            symptoms: 'Dolor punzante entre los omóplatos y cansancio muscular al final del día.',
+            tip: 'Cada 30 minutos, lleva tus hombros hacia atrás y abre el pecho. ¡Imagina que quieres juntar tus omóplatos!'
         },
         'lumbar': {
-            title: 'Lordosis Lumbar (L1-L5)',
-            stat: '85% causa de ausentismo',
-            risk: 'Sentarse sin apoyo lumbar transfiere el peso directamente a los discos L4 y L5. La presión intradiscal aumenta un 40% al estar mal sentado vs estar de pie.',
-            symptoms: 'Lumbago agudo, ciática, dolor en la zona baja al ponerse de pie y entumecimiento de extremidades inferiores.'
+            title: 'Espalda Baja',
+            stat: 'Es la zona que más se lesiona en el mundo',
+            risk: 'Sentarse sin apoyar la espalda baja. El peso de tu cuerpo "aplasta" los discos de tu columna en lugar de repartirse bien.',
+            symptoms: 'Dolor fuerte al levantarse, sensación de "corrientazo" hacia las piernas y lumbago.',
+            tip: 'Usa siempre una silla con soporte lumbar o pon una almohada pequeña en el hueco de tu espalda baja.'
         },
         'sacra': {
-            title: 'Zona Sacro-Coccígea',
-            stat: '30% por sedestación prolongada',
-            risk: 'Deslizarse en la silla hace que el peso recae en el cóccix en lugar de los isquiones, provocando inflamación en los ligamentos sacros.',
-            symptoms: 'Coccidinia (dolor en el hueso de la base), molestias al sentarse en superficies duras e inflamación local.'
+            title: 'Base de la Columna',
+            stat: 'Afecta la comodidad en jornadas largas',
+            risk: 'Sentarse en el borde de la silla o deslizarse hacia adelante. Todo el peso cae en un solo punto muy pequeño.',
+            symptoms: 'Dolor molesto al sentarse en sillas duras y presión en los huesos de la cadera.',
+            tip: 'Siéntate al fondo de la silla. Tus glúteos deben tocar el respaldo siempre.'
         }
     };
 
     function showInfo(zone) {
-        const data = infoData[zone];
+        const data = materialEstudio[zone];
         
-        // Mostrar contenedor de estadística
-        document.getElementById('stat-container').style.display = 'block';
-        
+        // Ocultar bienvenida, mostrar contenido
+        document.getElementById('welcome-msg').style.display = 'none';
+        document.getElementById('content-display').style.display = 'block';
+
         // Actualizar Textos
         document.getElementById('info-title').innerText = data.title;
         document.getElementById('info-stat').innerText = data.stat;
-        document.getElementById('info-risk').innerHTML = data.risk;
+        document.getElementById('info-risk').innerText = data.risk;
         document.getElementById('info-symptoms').innerText = data.symptoms;
-        document.getElementById('info-intro').style.display = 'none';
+        document.getElementById('info-tip').innerText = data.tip;
 
-        // Efecto visual suave de carga
+        // Pequeño efecto de brillo al cambiar
         const panel = document.getElementById('info-panel');
-        panel.style.backgroundColor = '#f0fff4';
-        setTimeout(() => panel.style.backgroundColor = '#f8fafc', 300);
+        panel.style.borderTopColor = (zone === 'lumbar') ? '#ef4444' : '#78bb1e';
     }
 </script>
 
